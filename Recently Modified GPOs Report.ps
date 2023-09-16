@@ -1,0 +1,20 @@
+Import-Module ActiveDirectory
+
+# Get the current date
+$currentDate = Get-Date
+
+# Define the time span of 'recently modified' (e.g., last 7 days)
+$timeSpan = New-TimeSpan -Days 7
+
+# Get the date of 7 days ago
+$startDate = $currentDate - $timeSpan
+
+# Get all GPOs that have been modified in the last 7 days
+$recentlyModifiedGPOs = Get-GPO -All | Where-Object { $_.ModificationTime -gt $startDate }
+
+# Generate a report of recently modified GPOs
+$reportPath = "C:\path\to\your\ReportFolder\RecentlyModifiedGPOsReport.csv"
+$recentlyModifiedGPOs | Select-Object DisplayName, ModificationTime, Description | Export-Csv -Path $reportPath -NoTypeInformation
+
+# Output the path to the report
+Write-Output "Report generated at $reportPath"
